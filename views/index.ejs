@@ -1,0 +1,56 @@
+<html>
+
+<head>
+    <title>
+        <%= title %>
+    </title>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+    <script src="/javascripts/index.js"></script>
+    <script type="text/javascript">
+        $(function($) {
+            $('input[name=myfile]').on('change', function(e) {
+                $('button[type=button]').on('click', function(e) {
+                    var formData = new FormData();
+                    // formData.ppend(name, element);
+                    if ($('input[name=myfile]')[0].files.length > 0) {
+                        for (var i = 0; i < $('input[name=myfile]')[0].files.length; i++) {
+                            formData.append('myfile', $('input[name=myfile]')[0].files[i]);
+                        }
+                    }
+                    $.ajax({
+                        url: '/upload',
+                        method: 'POST',
+                        data: formData,
+                        contentType: false, // 注意这里应设为false
+                        processData: false,
+                        success: function(data) {
+                            if (JSON.parse(data).result == 1) {
+                                $('.prompt').html(`文件${JSON.parse(data).fileName}已上传成功`);
+                            }
+                        },
+                        error: function(jqXHR) {
+                            alert(JSON.stringify(jqXHR));
+                        }
+                    })
+                });
+            });
+        });
+    </script>
+</head>
+
+<body>
+    <br><br><br>
+    <div class="box">
+        <div>
+            <div class="item">
+                <input type="file" name="myfile" style="font-size: 0.7rem;" multiple/>
+            </div>
+            <div class="item">
+                <button id="btn" type="button" style="display: block; padding: 4px 18px;" class="btn-default">ajax提交</button>
+            </div>
+        </div>
+        <div class="prompt" style="font-size: 0.7rem;"></div>
+    </div>
+</body>
+
+</html>
